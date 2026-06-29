@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CorpusQ - A professional retirement planning calculator designed to help you analyze, plan, and secure your financial future from investment to retirement.">
+  <title>CorpusQ - Professional Retirement Planning Calculator</title>
+  
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons for premium visual feel -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- CSS Style -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-container">
+        <!-- SVG Logo Recreated from uploaded asset -->
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 100" width="175" height="50">
+          <g transform="translate(5, 5)">
+            <!-- C Shape in Deep Teal -->
+            <path d="M 68 22 A 32 32 0 1 0 68 68" fill="none" stroke="#005B66" stroke-width="12" stroke-linecap="round" />
+            <!-- Yellow Q Tail -->
+            <line x1="56" y1="56" x2="80" y2="80" stroke="#FFD24A" stroke-width="12" stroke-linecap="round" />
+            <!-- Bar Chart inside C (Mint-Teal #00B4A6) -->
+            <rect x="22" y="48" width="7" height="16" rx="2" fill="#00B4A6" />
+            <rect x="34" y="38" width="7" height="26" rx="2" fill="#00B4A6" />
+            <rect x="46" y="27" width="7" height="37" rx="2" fill="#00B4A6" />
+          </g>
+          <text x="105" y="62" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="38" fill="#005B66">Corpus<tspan fill="#FFD24A">Q</tspan></text>
+        </svg>
+      </div>
+      <div class="header-tagline">
+        <span class="tagline-text">from investment to retirement</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-icon-toggle" id="btn-dark-mode" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
+          <i class="fa-solid fa-moon" id="dark-mode-icon"></i>
+        </button>
+        <button class="btn btn-secondary btn-header" id="btn-show-guidelines">
+          <i class="fa-solid fa-book-open"></i> Guidelines
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-main-content">
+    
+    <!-- PAGE 1: DETAILS ENTRY VIEW -->
+    <section id="inputs-view" class="view-panel active">
+      <div class="wizard-container">
+        <div class="wizard-header">
+          <i class="fa-solid fa-calculator icon-primary"></i>
+          <h1>Plan Your Retirement</h1>
+          <p>Provide your details below to generate a comprehensive retirement projection, Monte Carlo analysis, and asset allocation model.</p>
+        </div>
+        
+        <form id="calc-form" onsubmit="event.preventDefault();">
+          <div class="wizard-grid">
+            
+            <!-- Left Side: Basic Info -->
+            <div class="wizard-column">
+              <div class="input-section">
+                <h3>Personal Information</h3>
+                
+                <div class="form-group-row">
+                  <div class="form-group">
+                    <label for="current-age">Current Age <span class="info-tooltip" title="Your current age in years."><i class="fa-regular fa-circle-question"></i></span></label>
+                    <input type="number" id="current-age" min="18" max="100" value="30" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender">
+                      <option value="male" selected>Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="current-status">Employment Status</label>
+                  <div class="toggle-switch-container">
+                    <input type="radio" id="status-earning" name="current-status" value="earning" checked>
+                    <label for="status-earning" class="toggle-btn">Earning</label>
+                    <input type="radio" id="status-non-earning" name="current-status" value="non-earning">
+                    <label for="status-non-earning" class="toggle-btn">Non-Earning</label>
+                  </div>
+                </div>
+                
+                <!-- Earning conditional section -->
+                <div id="earning-fields" class="conditional-fields active">
+                  <div class="form-group">
+                    <label for="monthly-income">Current Monthly Income (₹)</label>
+                    <div class="input-with-icon">
+                      <span class="currency-symbol">₹</span>
+                      <input type="number" id="monthly-income" min="0" value="150000" step="5000">
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="monthly-sip">Current Monthly SIP / Investment (₹)</label>
+                    <div class="input-with-icon">
+                      <span class="currency-symbol">₹</span>
+                      <input type="number" id="monthly-sip" min="0" value="30000" step="1000">
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="total-corpus">Current Total Corpus (Investments + Savings) (₹)</label>
+                    <div class="input-with-icon">
+                      <span class="currency-symbol">₹</span>
+                      <input type="number" id="total-corpus" min="0" value="1500000" step="10000">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Right Side: Goals & Lifestyle -->
+            <div class="wizard-column">
+              <div class="input-section">
+                <h3>Retirement Goals</h3>
+                <div class="form-group">
+                  <label for="retirement-age">Desired Retirement Age <span class="info-tooltip" title="Age at which you want to stop working."><i class="fa-regular fa-circle-question"></i></span></label>
+                  <input type="number" id="retirement-age" min="30" max="80" value="60" required>
+                </div>
+              </div>
+              
+              <div class="input-section">
+                <h3>Target Lifestyle (Today's Value)</h3>
+                <p class="section-desc">Select desired monthly expense in today's money. This will be inflated to your retirement age.</p>
+                
+                <div class="lifestyle-selector">
+                  <button type="button" class="lifestyle-btn" data-value="25000">₹25K/mo</button>
+                  <button type="button" class="lifestyle-btn" data-value="50000">₹50K/mo</button>
+                  <button type="button" class="lifestyle-btn" data-value="100000">₹1L/mo</button>
+                  <button type="button" class="lifestyle-btn active" data-value="200000">₹2L/mo</button>
+                  <button type="button" class="lifestyle-btn" data-value="400000">₹4L/mo</button>
+                </div>
+                
+                <div class="form-group mt-3">
+                  <label for="custom-expense">Custom Monthly Expense (₹)</label>
+                  <div class="input-with-icon">
+                    <span class="currency-symbol">₹</span>
+                    <input type="number" id="custom-expense" min="5000" value="200000" step="5000">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- Expandable advanced assumptions panel -->
+          <div class="input-section accordion-section">
+            <div class="accordion-header" id="assumptions-toggle">
+              <h3>Advanced Assumptions (Editable)</h3>
+              <i class="fa-solid fa-chevron-down transition-transform"></i>
+            </div>
+            
+            <div class="accordion-content" id="assumptions-content">
+              <div class="assumptions-grid">
+                <div class="form-group">
+                  <label for="inflation">General Inflation (%)</label>
+                  <input type="number" id="inflation" min="0" max="25" step="0.1" value="6.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="pre-ret-return">Pre-Retirement Return (%)</label>
+                  <input type="number" id="pre-ret-return" min="0" max="30" step="0.1" value="12.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="post-ret-return">Post-Retirement Return (%)</label>
+                  <input type="number" id="post-ret-return" min="0" max="30" step="0.1" value="8.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="healthcare-inflation">Healthcare Inflation (%)</label>
+                  <input type="number" id="healthcare-inflation" min="0" max="30" step="0.1" value="8.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="tax-reserve-pct">Tax Reserve (%)</label>
+                  <input type="number" id="tax-reserve-pct" min="0" max="50" step="0.5" value="20.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="emergency-buffer-pct">Emergency Buffer (%)</label>
+                  <input type="number" id="emergency-buffer-pct" min="0" max="30" step="0.5" value="5.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="healthcare-reserve-pct">Healthcare Reserve (%)</label>
+                  <input type="number" id="healthcare-reserve-pct" min="0" max="30" step="0.5" value="10.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="longevity-buffer">Longevity Buffer (₹ Crore)</label>
+                  <input type="number" id="longevity-buffer" min="0" max="20" step="0.5" value="5.0">
+                </div>
+                
+                <div class="form-group">
+                  <label for="life-exp-male">Life Exp. (Male)</label>
+                  <input type="number" id="life-exp-male" min="40" max="110" value="85">
+                </div>
+                
+                <div class="form-group">
+                  <label for="life-exp-female">Life Exp. (Female)</label>
+                  <input type="number" id="life-exp-female" min="40" max="110" value="88">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Submit Button -->
+          <div class="wizard-footer">
+            <button type="button" class="btn btn-primary btn-lg" id="btn-generate-plan">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Retirement Plan
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+    
+    <!-- PAGE 2: RESULTS DASHBOARD VIEW -->
+    <section id="results-view" class="view-panel">
+      <div class="results-dashboard-container">
+        
+        <!-- Dashboard Navigation & Actions Header -->
+        <div class="results-action-bar">
+          <button class="btn btn-secondary" id="btn-back-to-inputs">
+            <i class="fa-solid fa-arrow-left"></i> Modify Inputs
+          </button>
+          <div class="action-buttons">
+            <button class="btn btn-secondary" id="btn-download-pdf">
+              <i class="fa-solid fa-file-pdf text-danger"></i> Download PDF Report
+            </button>
+            <button class="btn btn-primary" id="btn-download-text">
+              <i class="fa-solid fa-download"></i> Download Report Summary
+            </button>
+          </div>
+        </div>
+
+        <!-- Upper Gauges: Readiness & Success Rates -->
+        <div class="dashboard-gauges-grid">
+          <!-- Readiness Gauge -->
+          <div class="gauge-card-box">
+            <div class="gauge-card-header">
+              <span>Retirement Readiness Score</span>
+              <i class="fa-solid fa-gauge-high icon-accent"></i>
+            </div>
+            <div class="dashboard-gauge-canvas-wrapper">
+              <canvas id="readiness-gauge-chart" width="160" height="160"></canvas>
+              <div class="gauge-inner-values">
+                <span id="readiness-pct-text" class="g-value">0%</span>
+                <span id="readiness-status-label" class="badge">Critical</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Success Probability Gauge -->
+          <div class="gauge-card-box">
+            <div class="gauge-card-header">
+              <span>Success Probability (Monte Carlo)</span>
+              <i class="fa-solid fa-chart-line icon-success"></i>
+            </div>
+            <div class="dashboard-gauge-canvas-wrapper">
+              <canvas id="probability-gauge-chart" width="160" height="160"></canvas>
+              <div class="gauge-inner-values">
+                <span id="probability-value-text" class="g-value">0%</span>
+                <span class="sub-g-label">10,000 runs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Structured 19 Financial Metrics Sheet -->
+        <div class="financial-sheet-card">
+          <div class="sheet-header">
+            <i class="fa-solid fa-file-invoice-dollar icon-primary"></i>
+            <h2>CorpusQ Planning Sheet (19 Core Metrics)</h2>
+            <span class="badge badge-accent">Verified Calculation</span>
+          </div>
+          
+          <div class="financial-sheet-grid">
+            
+            <!-- Category 1: Profile & Horizon -->
+            <div class="sheet-category-column">
+              <h4>1. Horizon & Profile</h4>
+              <div class="sheet-row">
+                <span>Current Age</span>
+                <span id="m-current-age" class="s-val">0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Retirement Age</span>
+                <span id="m-retirement-age" class="s-val">0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Life Expectancy</span>
+                <span id="m-life-expectancy" class="s-val">0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Years Remaining</span>
+                <span id="m-years-remaining" class="s-val">0</span>
+              </div>
+            </div>
+
+            <!-- Category 2: Lifestyle & Reserves -->
+            <div class="sheet-category-column">
+              <h4>2. Lifestyle & Expenses</h4>
+              <div class="sheet-row">
+                <span>Current Monthly Expense</span>
+                <span id="m-current-expense" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Future Monthly Expense</span>
+                <span id="m-future-monthly-expense" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Future Annual Expense</span>
+                <span id="m-future-annual-expense" class="s-val">₹0</span>
+              </div>
+            </div>
+
+            <!-- Category 3: Reserves Buffer -->
+            <div class="sheet-category-column">
+              <h4>3. Required Reserves</h4>
+              <div class="sheet-row">
+                <span>Required Corpus</span>
+                <span id="m-required-corpus" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Healthcare Reserve (10%)</span>
+                <span id="m-healthcare-reserve" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Tax Reserve (20%)</span>
+                <span id="m-tax-reserve" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Emergency Buffer (5%)</span>
+                <span id="m-emergency-buffer" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Longevity Buffer</span>
+                <span id="m-longevity-buffer" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row highlight-row">
+                <span>Total Retirement Goal</span>
+                <span id="m-total-goal" class="s-val text-primary font-bold">₹0</span>
+              </div>
+            </div>
+
+            <!-- Category 4: Plan Projections -->
+            <div class="sheet-category-column">
+              <h4>4. Projections & Gap</h4>
+              <div class="sheet-row">
+                <span>Current Total Corpus</span>
+                <span id="m-current-corpus" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Monthly SIP / Investment</span>
+                <span id="m-monthly-sip" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Projected Corpus</span>
+                <span id="m-projected-corpus" class="s-val">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Retirement Gap / Surplus</span>
+                <span id="m-retirement-gap" class="s-val font-semibold">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Required Additional SIP</span>
+                <span id="m-required-sip" class="s-val font-semibold">₹0</span>
+              </div>
+              <div class="sheet-row">
+                <span>Retirement Readiness %</span>
+                <span id="m-readiness-pct" class="s-val font-bold">0%</span>
+              </div>
+              <div class="sheet-row">
+                <span>Success Probability %</span>
+                <span id="m-success-prob" class="s-val font-bold">0%</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- AI Coach Section -->
+        <div class="ai-coach-section">
+          <div class="section-title-with-badge">
+            <i class="fa-solid fa-robot icon-secondary"></i>
+            <h2>AI Retirement Coach Recommendations</h2>
+            <span class="badge badge-accent">Smart Advisory</span>
+          </div>
+          <div id="ai-coach-content" class="ai-coach-insights">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Charts Dashboard Tabs & Views -->
+        <div class="tabs-container">
+          <div class="tab-headers">
+            <button class="tab-btn active" data-tab="tab-charts">
+              <i class="fa-solid fa-chart-pie"></i> Visual Projections
+            </button>
+            <button class="tab-btn" data-tab="tab-table">
+              <i class="fa-solid fa-table-list"></i> Simulation Log
+            </button>
+          </div>
+
+          <!-- TAB 1: CHARTS GRID -->
+          <div class="tab-content active" id="tab-charts">
+            <div class="charts-grid">
+              
+              <!-- Chart 1: Wealth Growth Line Chart -->
+              <div class="chart-card span-2">
+                <h4>Wealth Growth & Target Projection</h4>
+                <div class="chart-container">
+                  <canvas id="wealth-growth-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 2: Corpus Breakdown Pie Chart -->
+              <div class="chart-card">
+                <h4>Target Goal Breakdown</h4>
+                <div class="chart-container">
+                  <canvas id="corpus-breakdown-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 3: Required vs Projected Bar Chart -->
+              <div class="chart-card">
+                <h4>Target Goal vs. Projected Wealth</h4>
+                <div class="chart-container">
+                  <canvas id="comparison-bar-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 4: Retirement Depletion Chart -->
+              <div class="chart-card span-2">
+                <h4>Post-Retirement Corpus Depletion (Simulation)</h4>
+                <p class="chart-subtitle">Shows how your Total Retirement Goal (corpus + all reserves) depletes from retirement age to life expectancy, alongside your projected actual corpus path.</p>
+                <div class="chart-container">
+                  <canvas id="depletion-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 5: Inflation Impact Chart -->
+              <div class="chart-card">
+                <h4>Inflation Impact on Value of Money</h4>
+                <div class="chart-container">
+                  <canvas id="inflation-impact-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 6: Asset Allocation Recommendation -->
+              <div class="chart-card">
+                <h4>Recommended Asset Allocation Path</h4>
+                <div class="chart-container">
+                  <canvas id="asset-allocation-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 7: Life Expectancy Trends Chart (full width) -->
+              <div class="chart-card span-2">
+
+                <div class="life-exp-header">
+                  <div>
+                    <h4>Conditional Life Expectancy Trends</h4>
+                    <p class="chart-subtitle">How expected age of death increases the longer you survive — shown for Indian male &amp; female averages. This is key for planning a <em>longer</em> retirement horizon.</p>
+                  </div>
+                  <span class="badge badge-accent"><i class="fa-solid fa-heartbeat"></i> Actuarial Data</span>
+                </div>
+                <div class="chart-container" style="height:260px;">
+                  <canvas id="life-expectancy-chart"></canvas>
+                </div>
+                <div class="life-exp-note">
+                  <i class="fa-solid fa-circle-info icon-secondary"></i>
+                  <div>
+                    <strong>Why does life expectancy increase as you age?</strong>
+                    <p>Life expectancy figures represent the <em>average remaining years</em> for someone who has <em>already survived</em> to a given age. A newborn's life expectancy includes mortality risk from childhood illnesses, accidents, and early-onset diseases. Once you survive those risks, your statistical average remaining lifespan actually rises. This is called <em>conditional survival probability</em> — the longer you live, the more you're beating the odds, and actuarial tables reflect this upward revision. For retirement planning, it means planning for a <strong>longer retirement</strong> than your birth-year tables might suggest.</p>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- end charts-grid -->
+          </div><!-- end tab-charts -->
+
+
+
+          <!-- TAB 2: YEAR-BY-YEAR DATA TABLE -->
+
+          <div class="tab-content" id="tab-table">
+            <div class="table-actions">
+              <h3>Retirement Projection Log</h3>
+              <button class="btn btn-secondary btn-sm" id="btn-export-csv">
+                <i class="fa-solid fa-download"></i> Export CSV
+              </button>
+            </div>
+            <div class="table-scroll-container">
+              <table class="data-table" id="simulation-table">
+                <thead>
+                  <tr>
+                    <th>Age</th>
+                    <th>Year</th>
+                    <th>Pre-Retirement Wealth (₹)</th>
+                    <th>Post-Retirement Wealth (₹)</th>
+                    <th>Annual Expenses (₹)</th>
+                    <th>SIP Contribution (₹)</th>
+                    <th>Growth Earned (₹)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+    
+  </main>
+
+  <!-- Community Guidelines Modal -->
+  <div class="modal-overlay" id="guidelines-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-container">
+          <!-- Inline SVG logo for modal header -->
+          <svg class="logo-svg-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 100" width="130" height="38">
+            <g transform="translate(5, 5)">
+              <path d="M 68 22 A 32 32 0 1 0 68 68" fill="none" stroke="#005B66" stroke-width="12" stroke-linecap="round" />
+              <line x1="56" y1="56" x2="80" y2="80" stroke="#FFD24A" stroke-width="12" stroke-linecap="round" />
+              <rect x="22" y="48" width="7" height="16" rx="2" fill="#00B4A6" />
+              <rect x="34" y="38" width="7" height="26" rx="2" fill="#00B4A6" />
+              <rect x="46" y="27" width="7" height="37" rx="2" fill="#00B4A6" />
+            </g>
+            <text x="105" y="62" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="38" fill="#005B66">Corpus<tspan fill="#FFD24A">Q</tspan></text>
+          </svg>
+          <h3>Community Guidelines</h3>
+        </div>
+        <button class="modal-close" id="btn-close-guidelines">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="guideline-intro">
+          <strong>Our Mission:</strong> CorpusQ exists to help people learn, plan, and discuss investing, retirement, and personal finance responsibly.
+        </div>
+        
+        <div class="guidelines-grid">
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-handshake text-secondary"></i>
+              <h4>Be Respectful</h4>
+            </div>
+            <p>Treat all members with respect. Harassment, hate speech, discrimination, bullying, or personal attacks are not allowed.</p>
+          </div>
+
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-bullhorn text-secondary"></i>
+              <h4>Share Responsibly</h4>
+            </div>
+            <p>Do not post misleading financial information, pump-and-dump content, scams, or unverifiable claims.</p>
+          </div>
+
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-shield-halved text-secondary"></i>
+              <h4>No Financial Guarantees</h4>
+            </div>
+            <p>Do not promise returns, guaranteed profits, or risk-free investments.</p>
+          </div>
+
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-user-lock text-secondary"></i>
+              <h4>Protect Privacy</h4>
+            </div>
+            <p>Never share personal, financial, account, or confidential information belonging to yourself or others.</p>
+          </div>
+
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-ban text-secondary"></i>
+              <h4>No Spam</h4>
+            </div>
+            <p>Avoid repetitive promotions, unsolicited advertising, referral spam, or irrelevant content.</p>
+          </div>
+
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-comments text-secondary"></i>
+              <h4>Constructive Discussions</h4>
+            </div>
+            <p>Support claims with data, sources, or logical reasoning. Encourage healthy debate.</p>
+          </div>
+
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-flag text-secondary"></i>
+              <h4>Report Issues</h4>
+            </div>
+            <p>Report suspicious behavior, scams, abuse, or guideline violations to moderators.</p>
+          </div>
+
+          <div class="guideline-item">
+            <div class="guideline-item-header">
+              <i class="fa-solid fa-gavel text-secondary"></i>
+              <h4>Moderation</h4>
+            </div>
+            <p>CorpusQ may remove content, issue warnings, or suspend accounts that violate these guidelines.</p>
+          </div>
+        </div>
+
+        <div class="guidelines-disclaimer">
+          <h5>Disclaimer</h5>
+          <p>Content shared by community members is for educational purposes only and does not constitute financial advice.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-close-guidelines-footer">I Understand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Footer with static Disclaimer & Guidelines Option -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-nav">
+        <span class="footer-copy">&copy; 2026 CorpusQ. All rights reserved.</span>
+        <a href="#" id="link-guidelines">Community Guidelines</a>
+      </div>
+      <p class="footer-disclaimer">
+        Disclaimer: The calculations, Monte Carlo simulations, and recommendations provided by CorpusQ are projections for educational and illustrative purposes only. They do not represent guaranteed returns or specific financial planning advice. Investments are subject to market risks. Please consult with a certified financial advisor before making any investment decisions.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
