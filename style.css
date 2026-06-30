@@ -6,8 +6,7 @@
     Accent Amber: #FFD24A
     Light Neutral: #F5F7FA
     Dark Neutral: #111827
-*/
-
+*/ 
 /* Reset & Base Variables */
 :root {
   --color-primary: #005B66;
@@ -58,9 +57,7 @@ body.dark-theme {
 }
 
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  box-sizing: border-box; 
 }
 
 body {
@@ -75,7 +72,7 @@ body {
   flex-direction: column;
 }
 
-/* Header */
+/* Header */ 
 .app-header {
   background-color: var(--color-card-bg);
   border-bottom: 1px solid var(--color-border);

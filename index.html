@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-  
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +16,7 @@
   
   <!-- CSS Style -->
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -24,37 +24,86 @@
 <body>
 
   <!-- Top Navigation Header -->
-  <header class="app-header">
-    <div class="header-container">
-      <div class="logo-container">
-        <!-- SVG Logo Recreated from uploaded asset -->
-        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 100" width="175" height="50">
-          <g transform="translate(5, 5)">
-            <!-- C Shape in Deep Teal -->
-            <path d="M 68 22 A 32 32 0 1 0 68 68" fill="none" stroke="#005B66" stroke-width="12" stroke-linecap="round" />
-            <!-- Yellow Q Tail -->
-            <line x1="56" y1="56" x2="80" y2="80" stroke="#FFD24A" stroke-width="12" stroke-linecap="round" />
-            <!-- Bar Chart inside C (Mint-Teal #00B4A6) -->
-            <rect x="22" y="48" width="7" height="16" rx="2" fill="#00B4A6" />
-            <rect x="34" y="38" width="7" height="26" rx="2" fill="#00B4A6" />
-            <rect x="46" y="27" width="7" height="37" rx="2" fill="#00B4A6" />
-          </g>
-          <text x="105" y="62" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="38" fill="#005B66">Corpus<tspan fill="#FFD24A">Q</tspan></text>
-        </svg>
-      </div>
-      <div class="header-tagline">
-        <span class="tagline-text">from investment to retirement</span>
-      </div>
-      <div class="header-actions">
-        <button class="btn btn-icon-toggle" id="btn-dark-mode" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
-          <i class="fa-solid fa-moon" id="dark-mode-icon"></i>
-        </button>
-        <button class="btn btn-secondary btn-header" id="btn-show-guidelines">
-          <i class="fa-solid fa-book-open"></i> Guidelines
-        </button>
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+
+    <!-- Logo -->
+    <div class="shrink-0">
+      <svg class="h-10 sm:h-12 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 100">
+        <g transform="translate(5,5)">
+          <path d="M68 22A32 32 0 1 0 68 68"
+                fill="none"
+                stroke="#005B66"
+                stroke-width="12"
+                stroke-linecap="round"/>
+
+          <line x1="56" y1="56"
+                x2="80" y2="80"
+                stroke="#FFD24A"
+                stroke-width="12"
+                stroke-linecap="round"/>
+
+          <rect x="22" y="48" width="7" height="16" rx="2" fill="#00B4A6"/>
+          <rect x="34" y="38" width="7" height="26" rx="2" fill="#00B4A6"/>
+          <rect x="46" y="27" width="7" height="37" rx="2" fill="#00B4A6"/>
+        </g>
+
+        <text x="105"
+              y="62"
+              font-family="'Plus Jakarta Sans', sans-serif"
+              font-size="38"
+              font-weight="800"
+              fill="#005B66">
+          Corpus<tspan fill="#FFD24A">Q</tspan>
+        </text>
+      </svg>
+    </div>
+
+    <!-- Tagline -->
+    <div class="hidden lg:flex flex-1 justify-center">
+      <div class="flex items-center gap-8">
+        <div class="h-8 w-px bg-gray-300"></div>
+
+        <span class="uppercase tracking-[5px] text-xs font-semibold text-gray-400">
+          From Investment to Retirement
+        </span>
       </div>
     </div>
-  </header>
+
+    <!-- Right Buttons -->
+    <div class="flex items-center gap-3">
+
+      <!-- Dark Mode -->
+      <button
+        id="btn-dark-mode"
+        class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#005B66] shadow-sm transition-all duration-300 hover:bg-[#005B66] hover:text-white">
+
+        <i class="fa-solid fa-moon text-sm"></i>
+
+      </button>
+
+      <!-- Guidelines -->
+      <button
+        id="btn-show-guidelines"
+        class="flex items-center gap-2 rounded-full bg-[#005B66] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-[#004a53] hover:shadow-xl">
+
+        <i class="fa-solid fa-book-open text-xs"></i>
+
+        <span>Guidelines</span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Mobile Tagline -->
+  <div class="block border-t border-gray-100 pb-3 text-center lg:hidden">
+    <span class="mt-2 block text-[10px] font-semibold uppercase tracking-[4px] text-gray-400">
+      From Investment to Retirement
+    </span>
+  </div>
+</header>
 
   <!-- Main Container -->
   <main class="app-main-content">
