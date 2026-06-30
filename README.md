@@ -37,9 +37,8 @@ considering inflation and investment growth.
 
 ## 🛠️ Tech Stack
 
--   React
--   TypeScript
--   Vite
+-   HTML
+-   tailwind
 -   CSS
 -   JavaScript
 
