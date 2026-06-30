@@ -880,7 +880,7 @@ select:focus {
 .modal-title-container h3 {
   font-family: var(--font-primary);
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   color: var(--color-primary);
   border-left: 2px solid var(--color-border);
   padding-left: 1rem;
